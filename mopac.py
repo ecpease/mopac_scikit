@@ -1,3 +1,12 @@
+"""
+Written by Emily Pease
+
+This script takes data from the Mopac Highway in Austin, Texas and uses this as a test case
+for scikit-learn implementation.  The data are the prices of the toll lane at each time of the
+day for each section of the highway.
+
+"""
+
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -9,23 +18,10 @@ df['sum'] = np.sum(df.loc[:], axis=1)
 df['datetime'] = pd.to_datetime(df['date'] + ' ' + df['time'])
 df['time'] = pd.to_datetime(df['time'])
 
-
-
-
-
-fig, ax = plt.subplots()
-plt.plot_date(df['time'], df['sum'])
-ax.set_title('Mopac Toll Prices')
-# plt.show()
-
 X, y = np.array(df['datetime'].tolist()), np.array(df['sum'].tolist()) # make these list like arrays
 d = np.array(df['datetime'].apply(lambda x: x.toordinal()).tolist())
 hour = np.array(df['datetime'].apply(lambda x: x.hour).tolist())
 month = np.array(df['datetime'].apply(lambda x: x.month).tolist())
-
-# print(X.shape, y.shape)
-# classifier = KNeighborsClassifier()
-# print(df.head())
 
 X1 = []
 for i in range(len(X)):
@@ -38,23 +34,21 @@ print("Labels for training and testing data")
 print(train_y.shape)
 print(test_y.shape)
 
-# df.to_csv('mopac_sum.csv')
-
+df.to_csv('mopac_sum.csv')
 
 k = 20 # ?? I dont know what is best to use yet
-knn = KNeighborsRegressor(n_neighbors=k) # use regressor for this kinda data
+knn = KNeighborsRegressor(n_neighbors=k) # use regressor for this kind of data
 knn.fit(train_X,train_y)
 
-######
-# from here on you can look at the metrics and see how it looks, like what is the corrolation?
-
-# you could also try to predict the future by feeding an array of the shape (day, hour, month)
-
-# somthing like
-future_time = [[5,9,7]] # 5th of july at 9 am
+# TODO: look at correlation matrix, predict future by feeding array of the shape (day, hr, month)
+# Like the following:
+future_time = [[5,9,7]] # 5th of July at 9 am
 future_time = np.array(future_time)
 
 y_pred = knn.predict(future_time)
 print(y_pred)
 
+fig, ax = plt.subplots()
+plt.plot_date(df['time'], df['sum'])
+ax.set_title('Mopac Toll Prices')
 plt.show()
